@@ -1,10 +1,8 @@
-/*
-RECIEVE
-*/
-
 #include <esp_now.h>
 #include <WiFi.h>
-#include "BluetoothSerial.h" 
+
+int x1;
+// int incoming;
 
 #define ml1 5
 #define ml2 18
@@ -19,12 +17,6 @@ RECIEVE
 #define heater 17
 #define fan 16
 #define LED 22
-
-BluetoothSerial ESP_BT; 
-
-int incoming;
-
-
 
 void motor(int jahat)
 {
@@ -71,15 +63,11 @@ void motor(int jahat)
 }
 
 
-
-// Structure example to receive data
-// Must match the sender structure
 typedef struct struct_message {
     int m;
 } struct_message;
-
-// Create a struct_message called myData
 struct_message myData;
+
 
 // callback function that will be executed when data is received
 void OnDataRecv(const uint8_t * mac, const uint8_t *incomingData, int len) {
@@ -89,29 +77,14 @@ if(ms1 == 0){if (myData.m != 5){
   motor(myData.m);
   delay(500);
   }}
-
-// Serial.print("sharp   ");
-// Serial.println(analogRead(sharp));
-
-// Serial.print("temp   ");
-// Serial.println(analogRead(temp));
-
-// Serial.print("light   ");
-// Serial.println(analogRead(light));
-
-// Serial.print("ms1   ");
-// Serial.println(digitalRead(ms1));
-
-// Serial.print("ms2   ");
-// Serial.println(digitalRead(ms2));
-// Serial.print("esp now   ");
-// Serial.println(myData.m);
 }
  
 void setup() {
   // Initialize Serial Monitor
   Serial.begin(115200);
-  pinMode(ml1,OUTPUT);
+
+
+pinMode(ml1,OUTPUT);
 pinMode(ml2,OUTPUT);
 pinMode(mr1,OUTPUT);
 pinMode(mr2,OUTPUT);
@@ -125,8 +98,6 @@ pinMode(light,INPUT);
 pinMode(sharp,INPUT);
 pinMode(ms1,INPUT);
 pinMode(ms2,INPUT);
-
-  ESP_BT.begin("Quadriplegic app"); //Name of your Bluetooth interface -> will show up on your phone
 
 
   // Set device as a Wi-Fi Station
@@ -144,9 +115,12 @@ pinMode(ms2,INPUT);
 }
  
 void loop() {
-  if(ms1 == 0){
-  if(digitalRead(ms2) == 0){
+    digitalWrite(LED, HIGH);
+  if(ms1 == 1){
+
+  if(digitalRead(ms2) == 1){
 x1 ++;
+delay(300);
   }
   if((x1 % 2)==0){
   if(analogRead(sharp) > 450)  {
@@ -179,21 +153,21 @@ if ((x1 % 2) == 1){
 Serial.println("hey");
 
 }
-  if (ESP_BT.available()) {
-    incoming = ESP_BT.read(); //Read what we receive 
+  // if (ESP_BT.available()) {
+  //   incoming = ESP_BT.read(); //Read what we receive 
 
-    // separate button ID from button value -> button ID is 10, 20, 30, etc, value is 1 or 0
-    int button = floor(incoming / 10);
-    int value = incoming % 10;
+  //   // separate button ID from button value -> button ID is 10, 20, 30, etc, value is 1 or 0
+  //   int button = floor(incoming / 10);
+  //   int value = incoming % 10;
 
-    switch (button) {
-      case 1:  
-        digitalWrite(fan, value);
-        break;
-      case 2:  
-        digitalWrite(heater, value);
-        break;
-    }
-  }
+  //   switch (button) {
+  //     case 1:  
+  //       digitalWrite(fan, value);
+  //       break;
+  //     case 2:  
+  //       digitalWrite(heater, value);
+  //       break;
+  //   }
+  // }
   }
 }  
